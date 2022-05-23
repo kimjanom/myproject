@@ -33,6 +33,16 @@ public class UploadDto {
     private LocalDateTime uploadDate;
     @Column(nullable = false, length = 200)
     private String content;
+    @Column(nullable = false)
+    private int views;
+    @Column(nullable = false, length = 400)
+    private String category;
+    @Column(nullable = true, length = 200)
+    private String filePathImage;
+    @Column(nullable = true, length = 200)
+    private String ImageContent;
+    @Column(nullable = false, length = 600)
+    private String fileSetNameImage;
 
 
     public UploadDto(Long id, String email, String name, String title, LocalDateTime uploadDate, String content) {

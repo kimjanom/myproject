@@ -149,6 +149,5 @@ public class LinkController {
     public void searcher(@RequestParam String search){
         System.out.println("서치 컨트롤러 파라미터 확인:"+search);
         List searchData=searchService.boardSearch(search);
-
     }
 }

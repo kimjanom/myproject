@@ -30,6 +30,8 @@
     <div class="form-group">
         <label>이메일</label>
         <input name="email" type="email" class="form-control" />
+
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
     </div>
     <div class="form-group">
         <label>비밀번호</label>

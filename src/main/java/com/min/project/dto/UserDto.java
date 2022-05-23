@@ -27,6 +27,8 @@ public class UserDto {
     private String username;
     @Column(nullable = false, length = 60)
     private String email;
+    @Column(nullable = false, length = 60)
+    private String checkEmail;
 
     @Column(nullable = false)
     private String role;

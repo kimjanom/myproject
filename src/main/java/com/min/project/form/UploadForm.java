@@ -17,6 +17,8 @@ public class UploadForm {
     private String content;
     private String filePath;
     private LocalDateTime uploadDate;
+    private int views;
+    private String category;
 }
 //    public UploadDto toEntity(){
 //        return new UploadDto(1l,email,name,title,uploadDate,content);

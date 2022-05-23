@@ -9,6 +9,7 @@ import com.min.project.dto.UserDto;
 import com.min.project.form.UserForm;
 import com.min.project.service.UploadServiceImpl;
 import lombok.SneakyThrows;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
@@ -59,7 +60,8 @@ public class RestControllerTest {
 
 //
 
-
+    @Autowired
+    UploadServiceImpl uploadService;
     @Autowired
     UploadServiceImpl impl;
     @Autowired
@@ -80,88 +82,107 @@ public class RestControllerTest {
 //
 //    }
 
-    @SneakyThrows
-    @RequestMapping(value = "upload/media", method = RequestMethod.POST)
+//    @SneakyThrows
+    @RequestMapping(value = "/upload/media", method = RequestMethod.POST)
     public ModelAndView uploadDataController(UploadDto upload,
                                              MultipartHttpServletRequest multipartHttpServletRequest,
                                              HttpServletRequest request )throws Exception {
 //      세션에서 이메일 정보 가져오기
         System.out.println("IndexView");
 
-        SecurityContext securityContext= SecurityContextHolder.getContext();
-        System.out.println("securityContext.getAuthentication():"+securityContext.getAuthentication());
-        System.out.println("securityContext.getAuthentication()2:"+securityContext.getAuthentication().getPrincipal());
-        Object principal= securityContext.getAuthentication().getPrincipal();
-        MyUserDetails userDto= (MyUserDetails)principal;
-        UserDto name = joinDao.findByEmail(userDto.getUsername());
+//        SecurityContext securityContext= SecurityContextHolder.getContext();
+//        System.out.println("securityContext.getAuthentication():"+securityContext.getAuthentication());
+//        System.out.println("securityContext.getAuthentication()2:"+securityContext.getAuthentication().getPrincipal());
+//        Optional principal= (Optional) securityContext.getAuthentication().getPrincipal();
+//        UserDto userDto = (UserDto) principal.get();
+//        System.out.println("ssss"+upload);
+//
+//        UserDto name = joinDao.findByEmail( userDto.getEmail());
 
-        System.out.println("name--"+name.getUsername());
+        UserDto name = joinDao.findByEmail("alscjf126@bonobono.com");
 
-        if (ObjectUtils.isEmpty(multipartHttpServletRequest)) {
-            return null;
-        }
-
-        List<UploadDto> fileList = new ArrayList<>();
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMdd");
-        ZonedDateTime current = ZonedDateTime.now();
-        //폴더 만들기
-        String path = rootPath + current.format(format);
-        File file = new File(path);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-
-        Iterator<String> iterator = multipartHttpServletRequest.getFileNames();
-        System.out.println("-------------------------type:"+multipartHttpServletRequest.getClass());
-        System.out.println("-------------------------type2:"+iterator.getClass());
-
-        String newFileName, originalFileExtension = null, contentType, uuid;
-
-        while (iterator.hasNext()) {
-            List<MultipartFile> list = multipartHttpServletRequest.getFiles(iterator.next());
-
-            System.out.println("-------------------------List:"+list);
-            for (MultipartFile multipartFile : list) {
-                System.out.println("-------------------------");
-                if (!multipartFile.isEmpty()) {
-                    contentType = multipartFile.getContentType();
-                    if (ObjectUtils.isEmpty(contentType)) {
-                        break;
-                    } else {
-                        System.out.println("file content type : " + contentType);
-                        if (contentType.contains("audio/mpeg")) {
-                            originalFileExtension = ".mp3";
-                        } else {
-                            break;
-                        }
-                    }
-                }
-                uuid=UUID.randomUUID().toString();
-                newFileName = uuid + originalFileExtension;
-//                UploadDto dto = new UploadDto();
-                //-----------------------dto에 데이터 삽입
-                upload.setFileSize(multipartFile.getSize());
-                upload.setFileOriginalName(multipartFile.getOriginalFilename());
-                upload.setFileSetName(newFileName);
-                upload.setFilePath(path);
-
-                upload.setEmail(name.getEmail());
-                upload.setName(name.getUsername());
-//                upload.setUploadDate(formatedNow);
-
-                //----------------------dto에 데이터 삽입
-                file = new File(path + "/" + newFileName);
-                System.out.println("------------------dto 데이터:"+upload);
-                System.out.println("------------------path데이터:"+path);
-                System.out.println("------------------newfilename 데이터:"+newFileName);
-                impl.insertData(upload,multipartHttpServletRequest);
-                multipartFile.transferTo(file);
-                dao.save(upload);
-
-
-
-            }
-        }
+        boolean check = uploadService.upLoadAlbum(name,upload,multipartHttpServletRequest);
+//        if (ObjectUtils.isEmpty(multipartHttpServletRequest)) {
+//            return null;
+//        }
+//        System.out.println("name--"+name.getUsername());
+//        List<UploadDto> fileList = new ArrayList<>();
+//        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMdd");
+//        ZonedDateTime current = ZonedDateTime.now();
+//        //폴더 만들기
+//        String path = rootPath + current.format(format);
+//        File file = new File(path);
+//        if (!file.exists()) {
+//            file.mkdirs();
+//        }
+//        //이미지와 음원 폴더 분할
+//        String pathAudio = path + "/"+"Audio";
+//        File fileAudio = new File(pathAudio);
+//        if (!fileAudio.exists()) {
+//            fileAudio.mkdirs();
+//        }
+//
+//        String pathImage = path + "/"+"Image";
+//        File fileImage = new File(pathImage);
+//        if (!fileImage.exists()) {
+//            fileImage.mkdirs();
+//        }
+//
+//        Iterator<String> iterator = multipartHttpServletRequest.getFileNames();
+//        System.out.println("-------------------------type:"+multipartHttpServletRequest.getClass());
+//        System.out.println("-------------------------type2:"+iterator.getClass());
+//
+//        String newFileName;
+//        String originalFileExtension = null;
+//        String contentType;
+//        String uuid;
+//
+//        while (iterator.hasNext()) {
+//            List<MultipartFile> list = multipartHttpServletRequest.getFiles(iterator.next());
+//
+//            System.out.println("-------------------------List:"+list);
+//            for (MultipartFile multipartFile : list) {
+//                System.out.println("-------------------------");
+//                if (!multipartFile.isEmpty()) {
+//                    contentType = multipartFile.getContentType();
+//                    if (ObjectUtils.isEmpty(contentType)) {
+//                        break;
+//                    } else {
+//                        System.out.println("file content type : " + contentType);
+//                        if (contentType.contains("audio/mpeg")) {
+//                            originalFileExtension = ".mp3";
+//                        } else {
+//                            break;
+//                        }
+//                    }
+//                }
+//                uuid=UUID.randomUUID().toString();
+//                newFileName = uuid + originalFileExtension;
+////                UploadDto dto = new UploadDto();
+//                //-----------------------dto에 데이터 삽입
+//                upload.setFileSize(multipartFile.getSize());
+//                upload.setFileOriginalName(multipartFile.getOriginalFilename());
+//                upload.setFileSetName(newFileName);
+//                upload.setFilePath(path);
+//                upload.setCategory(upload.getCategory());
+//                upload.setViews(0);
+//                upload.setEmail(name.getEmail());
+//                upload.setName(name.getUsername());
+////                upload.setUploadDate(formatedNow);
+//
+//                //----------------------dto에 데이터 삽입
+//                file = new File(path + "/" + newFileName);
+//                System.out.println("------------------dto 데이터:"+upload);
+//                System.out.println("------------------path데이터:"+path);
+//                System.out.println("------------------newfilename 데이터:"+newFileName);
+//                impl.insertData(upload,multipartHttpServletRequest);
+//                multipartFile.transferTo(file);
+//                dao.save(upload);
+//
+//
+//
+//            }
+//        }
         return new ModelAndView("redirect:/board");
     }
 
@@ -287,6 +308,7 @@ public class RestControllerTest {
 
     @GetMapping(value = "/audioLink/+{id}.mp3")
     public ResponseEntity<byte[]> AudioLink(@PathVariable Long id) throws IOException {
+        System.out.println("통신보안");
         Optional<UploadDto> data=dao.findById(id);
         UploadDto dto=data.get();
 
@@ -317,6 +339,37 @@ public class RestControllerTest {
         return responseEntity;
 
 
+    }
+    @GetMapping(value = "/imageLink/+{id}.com")
+    public ResponseEntity<byte[]> imageLink(@PathVariable Long id) throws IOException{
+        Optional<UploadDto> data=dao.findById(id);
+        UploadDto dto=data.get();
+
+        FileInputStream fis=null;
+        ResponseEntity<byte[]> responseEntity = null;
+
+        HttpHeaders responseHeaders = new HttpHeaders();
+        File file =new File(dto.getFilePathImage()+"/"+dto.getFileSetNameImage());
+        responseHeaders.add("Content-Type",dto.getImageContent());
+
+        try {
+            fis=new FileInputStream(file);
+            int initFileSize=(int)file.length();
+            byte[] buf =new byte[initFileSize];
+            System.out.println("-------------------------buf:"+buf);
+            System.out.println("-------------------------fis:"+fis);
+            fis.read(buf,0,initFileSize);
+            responseEntity=new ResponseEntity<>(buf,responseHeaders,HttpStatus.OK);
+            System.out.println("-------------------------responseEntity:"+responseEntity);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(new byte[0], responseHeaders, HttpStatus.NOT_FOUND);
+        }finally {
+
+            fis.close();
+
+        }
+        return responseEntity;
     }
 
 

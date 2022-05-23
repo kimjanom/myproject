@@ -67,8 +67,16 @@
             <input type="text" name="content" class="form-control" id="exampleInputPassword1" placeholder="content">
         </div>
         <div class="form-group">
+            <label for="exampleInputcategory" class="form-label mt-4">category</label>
+            <input type="text" name="category" class="form-control" id="exampleInputcategory" placeholder="category">
+        </div>
+        <div class="form-group">
             <label for="formFile" class="form-label mt-4">Default file input example</label>
             <input class="form-control" type="file" id="formFile" name="file">
+        </div>
+        <div class="form-group">
+            <label for="formFile" class="form-label mt-4">Default file input example</label>
+            <input class="form-control" type="file" id="form" name="fileImage">
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </fieldset>

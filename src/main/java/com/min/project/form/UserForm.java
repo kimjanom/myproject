@@ -10,7 +10,9 @@ public class UserForm {
     private String username;
     private String password;
     private String email;
+    private String checkEmail;
     private String role;
+    private String token;
 
 //    public UserDto toEntity(){
 //        UserDto user =UserDto.builder()
