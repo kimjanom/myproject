@@ -1,7 +1,5 @@
 package com.min.project.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.min.project.config.auth.JwtTokenProvider;
 import com.min.project.dao.CrowlingDao;
 import com.min.project.dao.TwitterDao;
@@ -11,44 +9,22 @@ import com.min.project.dto.TwitterDto;
 import com.min.project.dto.UploadDto;
 import com.min.project.dto.UserDto;
 import com.min.project.form.UserForm;
-import com.min.project.service.CrawlService;
-import com.min.project.service.EmailServiceImpl;
-import com.min.project.service.UploadServiceImpl;
-import com.min.project.service.UserService;
-import org.checkerframework.checker.units.qual.A;
+import com.min.project.service.*;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
-import org.openqa.selenium.PageLoadStrategy;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.util.CookieGenerator;
 
-import javax.print.Doc;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -65,6 +41,8 @@ public class VueController {
     public static String WEB_DRIVER_PATH = "C:/Users/e2on/IdeaProjects/myproject/chromedriver.exe";
     //    @Autowired
 //    CookieCsrfTokenRepository cookieCsrfTokenRepository;
+    @Autowired
+    ThreedService threedService;
     @Autowired
     CrawlService crawlService;
     @Autowired
@@ -249,8 +227,8 @@ public class VueController {
     }
 
     @PostMapping("/vue/crawling")
-    public void crol() throws IOException {
-
+    public ArrayList crol(@RequestParam("url") String url) throws IOException {
+        ArrayList Turl = null;
 //            String q = "스칼라"; // 검색어
 //
 //            Document doc = Jsoup.connect("https://ac.search.naver.com/nx/ac")
@@ -286,7 +264,7 @@ public class VueController {
         try {
             //1.수집 대상 URL
             String TwitterUrl = "https://twitter.com/search?q=%EC%9E%91%EB%8C%80%EA%B8%B0&src=recent_search_click";
-            String TwitterUrlApi = "https://twitter.com/i/api/2/search/adaptive.json?include_profile_interstitial_type=1&include_blocking=1&include_blocked_by=1&include_followed_by=1&include_want_retweets=1&include_mute_edge=1&include_can_dm=1&include_can_media_tag=1&include_ext_has_nft_avatar=1&skip_status=1&cards_platform=Web-12&include_cards=1&include_ext_alt_text=true&include_quote_count=true&include_reply_count=1&tweet_mode=extended&include_entities=true&include_user_entities=true&include_ext_media_color=true&include_ext_media_availability=true&include_ext_sensitive_media_warning=true&include_ext_trusted_friends_metadata=true&include_ext_vibe_tag=true&send_error_codes=true&simple_quoted_tweet=true&q=%EC%9E%91%EB%8C%80%EA%B8%B0&count=20&query_source=typed_query&pc=1&spelling_corrections=1&ext=mediaStats%2ChighlightedLabel%2ChasNftAvatar%2CvoiceInfo%2Cenrichments%2CsuperFollowMetadata%2CunmentionInfo";
+            String TwitterUrlApi = "https://twitter.com/i/api/2/search/adaptive.json?include_profile_interstitial_type=1&include_blocking=1&include_blocked_by=1&include_followed_by=1&include_want_retweets=1&include_mute_edge=1&include_can_dm=1&include_can_media_tag=1&include_ext_has_nft_avatar=1&skip_status=1&cards_platform=Web-12&include_cards=1&include_ext_alt_text=true&include_quote_count=true&include_reply_count=1&tweet_mode=extended&include_entities=true&include_user_entities=true&include_ext_media_color=true&include_ext_media_availability=true&include_ext_sensitive_media_warning=true&include_ext_trusted_friends_metadata=true&send_error_codes=true&simple_quoted_tweet=true&q=%EC%9E%91%EB%8C%80%EA%B8%B0&tweet_search_mode=live&count=20&query_source=typed_query&pc=1&spelling_corrections=1&ext=mediaStats%2ChighlightedLabel%2ChasNftAvatar%2CvoiceInfo%2Cenrichments%2CsuperFollowMetadata%2CunmentionInfo";
             String TwitterScrollApi = "https://twitter.com/i/api/2/search/adaptive.json?include_profile_interstitial_type=1&include_blocking=1&include_blocked_by=1&include_followed_by=1&include_want_retweets=1&include_mute_edge=1&include_can_dm=1&include_can_media_tag=1&include_ext_has_nft_avatar=1&skip_status=1&cards_platform=Web-12&include_cards=1&include_ext_alt_text=true&include_quote_count=true&include_reply_count=1&tweet_mode=extended&include_entities=true&include_user_entities=true&include_ext_media_color=true&include_ext_media_availability=true&include_ext_sensitive_media_warning=true&include_ext_trusted_friends_metadata=true&send_error_codes=true&simple_quoted_tweet=true&q=%EC%9E%91%EB%8C%80%EA%B8%B0&tweet_search_mode=live&count=20&query_source=typed_query&cursor=scroll%3AthGAVUV0VFVBaCgNSt0NvdsioWgMDR1Y3Z7rIqEnEV5P95FYCJehgHREVGQVVMVDUBFQ4VAAA%3D&pc=1&spelling_corrections=1&ext=mediaStats%2ChighlightedLabel%2ChasNftAvatar%2CvoiceInfo%2Cenrichments%2CsuperFollowMetadata%2CunmentionInfo";
             String DCURL = "https://gall.dcinside.com/board/lists/?id=tree&page=1";
             String NaverURL = "https://news.naver.com/main/mainNews.naver?sid1=105&date=%2000:00:00&page=1";
@@ -302,10 +280,14 @@ public class VueController {
                     .ignoreContentType(true)
                     .get();
             // 4. 요소 탐색
-            // 4-1. Attribute 탐색
+            // 4-1. Attribute 탐색userdto
             //트위터 크롤링--------------------------------------
-            crawlService.twitterCrawl(TwitterUrlApi);
-            //트위터--------------------------------------------
+            System.out.println("뭐냐 "+url);
+            Turl = crawlService.twitterCrawl(url);
+            System.out.println("다음 url1:"+Turl);
+//            threedService.start();
+            //트위터------------------------------------
+            // --------
             // dc 데이터 분석---------------------
 //            int cout =0;
 //            for (int a = 1; a <= 10; a++) {
@@ -361,8 +343,19 @@ public class VueController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        return Turl;
     }
+
+    @PostMapping("/vue/getData")
+    public List getData() {
+        List<TwitterDto> data = (List) twitterDao.findAll();
+        List<TwitterDto> List = new ArrayList<>();
+        for (TwitterDto dto : data) {
+            List.add(dto);
+        }
+        return List;
+    }
+
 //    @PostMapping("/vue/croling")
 //    public void crol() {
 //        // WebDriver 경로 설정
